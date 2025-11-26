@@ -1,4 +1,6 @@
 --!strict
+--!native
+--!optimize 2
 
 local agent_instance = {}
 
@@ -114,14 +116,20 @@ end
 -- @return thread: The thread loop
 function agent_instance:create_inference_thread(get_state: () -> { number }, on_action: (action_index: number) -> ()): thread
 	return task.spawn(function()
+		local index = 0
+
 		while not self.env.done do
 			local state = get_state()
 
 			local action = self:get_best_action(state)
 
 			on_action(action)
+			
+			index += 1
 
-			task.wait(self.config.step_interval)
+			if index % agent_instance.Modules.default_config.interval_per_steps == 0 then
+				task.wait(self.config.step_interval)
+			end
 		end
 	end)
 end
@@ -255,6 +263,7 @@ function agent_instance:run_episode(step_callback: ((observation: { number }) ->
 	local observation = self.env:reset()
 	local total_reward = 0
 	local current_step = 0
+	local index = 0
 
 	while not self.env.done and current_step < self.config.step_limit do
 		if step_callback then
@@ -275,8 +284,12 @@ function agent_instance:run_episode(step_callback: ((observation: { number }) ->
 		total_reward += reward
 
 		current_step += 1
+		
+		index += 1
 
-		task.wait(self.config.step_interval)
+		if index % agent_instance.Modules.default_config.interval_per_steps == 0 then
+			task.wait(self.config.step_interval)
+		end
 	end
 
 	self:decay_epsilon()
