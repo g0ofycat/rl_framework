@@ -1,0 +1,12 @@
+{
+  "name": "rl_framework",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "src": {
+        "$path": "src"
+      }
+    }
+  }
+}

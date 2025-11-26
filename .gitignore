@@ -1,0 +1,8 @@
+# Project place file
+/rl_framework.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+.src/config.lua
