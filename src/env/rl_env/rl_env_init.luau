@@ -74,7 +74,7 @@ function rl_env:add_action(action: string, action_index: number?, info: any?): (
 	self.score = score
 
 	if self.on_action then
-		self:on_action(action, action_index)
+		self:on_action(action_index)
 	end
 
 	self.lru_actions:put(action, score)

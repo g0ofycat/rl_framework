@@ -23,7 +23,7 @@ export type observation_type = { any } | {
 export type callback_table = {
 	on_reset: ((self: any) -> ())?,
 	on_step: ((self: any, action_index: number) -> (number, boolean))?,
-	on_action: ((self: any, action: string, action_index: number) -> ())?,
+	on_action: ((self: any, action_index: number) -> ())?,
 	observation_overwrite: ((self: any) -> observation_type)?
 }
 

@@ -6,7 +6,7 @@ return {
 	gamma = 0.99,
 	epsilon = 1.0,
 	epsilon_min = 0.01,
-	epsilon_decay = 0.999999,
+	epsilon_decay = 0.999,
 	target_update_freq = 10,
 	step_limit = 10,
 	step_interval = 0.0,
