@@ -95,7 +95,7 @@ end
 -- @param state: The current state
 -- @return number: Best Action
 function agent_instance:get_best_action(state: { number }): number
-	local q_values = self.policy_net:Predict(state, 0.0)
+	local _, _, q_values = self.policy_net:ForwardPropagation(state, false)
 
 	local best_action = 1
 	local max_q = q_values[1]
@@ -124,7 +124,7 @@ function agent_instance:create_inference_thread(get_state: () -> { number }, on_
 			local action = self:get_best_action(state)
 
 			on_action(action)
-			
+
 			index += 1
 
 			if index % agent_instance.Modules.default_config.interval_per_steps == 0 then
@@ -225,6 +225,11 @@ function agent_instance:get_env_variables(): any?
 	return self.env.env_variables
 end
 
+-- return_config(): Return the config table
+function agent_instance:return_config(): any
+	return self.config
+end
+
 --=========================
 -- // SAVING / LOADING
 --=========================
@@ -284,7 +289,7 @@ function agent_instance:run_episode(step_callback: ((observation: { number }) ->
 		total_reward += reward
 
 		current_step += 1
-		
+
 		index += 1
 
 		if index % agent_instance.Modules.default_config.interval_per_steps == 0 then
