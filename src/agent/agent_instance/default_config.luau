@@ -12,7 +12,7 @@ return {
 	step_interval = 0.0,
 	interval_per_steps = 100,
 
-	hidden_neurons = 64,
+	hidden_layers = { 64, 64, 64 },
 	dropout_rate = 0.1,
 	soft_update_tau = 0.05
 }

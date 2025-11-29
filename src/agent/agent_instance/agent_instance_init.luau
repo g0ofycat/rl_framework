@@ -14,7 +14,7 @@ agent_instance.Modules = {
 	ts_database = require("../../db/ts_database/ts_database_init"),
 	rl_env = require("../../env/rl_env/rl_env_init"),
 	lru_cache = require("../../env/utility/lru_cache/lru_cache_init"),
-	FFN = require("../../nn/FFN/FFN_Init"),
+	MLP = require("../../nn/MLP/MLP_Init"),
 
 	default_config = require("./default_config"),
 	config = require("../../config")
@@ -60,8 +60,8 @@ function agent_instance.new(state_size: number, action_size: number, config: { [
 
 	local self = {}
 
-	self.policy_net = agent_instance.Modules.FFN.new(state_size, new_config.hidden_neurons, action_size, new_config.dropout_rate)
-	self.target_net = agent_instance.Modules.FFN.new(state_size, new_config.hidden_neurons, action_size, new_config.dropout_rate)
+	self.policy_net = agent_instance.Modules.MLP.new(state_size, new_config.hidden_layers, action_size, new_config.dropout_rate)
+	self.target_net = agent_instance.Modules.MLP.new(state_size, new_config.hidden_layers, action_size, new_config.dropout_rate)
 
 	self.env = agent_instance.Modules.rl_env.new(action_map, lru_cache_capacity, callbacks, env_variables)
 

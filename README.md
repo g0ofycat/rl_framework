@@ -152,23 +152,23 @@ function agent_instance:get_best_action(state: { number }): number
 
 rl framework uses DQN and Epsilon-Greedy (With Decay); settings are self explanatory
 
+**example settings for training (found in agent/agent_instance/default_config.luau):**
+
 ```lua
---!strict
-
 return {
-	batch_size = 4,
+	batch_size = 32,
 	learning_rate = 0.001,
-	gamma = 0.99,
+	gamma = 0.95,
 	epsilon = 1.0,
-	epsilon_min = 0.01,
-	epsilon_decay = 0.999,
-	target_update_freq = 10,
-	step_limit = 10,
+	epsilon_min = 0.05,
+	epsilon_decay = 0.9995,
+	target_update_freq = 20,
+	step_limit = 200,
 	step_interval = 0.0,
-	interval_per_steps = 1,
+	interval_per_steps = 100,
 
-	hidden_neurons = 16,
-	dropout_rate = 0.01,
-	soft_update_tau = 0.01
+	hidden_layers = { 64, 64, 64 },
+	dropout_rate = 0.1,
+	soft_update_tau = 0.05
 }
 ```
