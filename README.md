@@ -46,7 +46,7 @@ local new_agent = agent_instance.new(0, 0,
 	observation_overwrite = function(self)
 
 	end
-}, {}, {})
+}, {}, {}, {})
 ```
 
 **state_size -** *Amount of input neurons*
@@ -62,6 +62,8 @@ local new_agent = agent_instance.new(0, 0,
 **env_variables -** *Usually a hashmap of variables that should be exposed only to the enviroment, should be used in the callback functions*
 
 **config -** *Custom configuration to override default_config.luau (Can be Partial)*
+
+**nn_config -** *Custom configuration to override MLP/Config.luau (Can be Partial)*
 
 ## setting up enviroment:
 

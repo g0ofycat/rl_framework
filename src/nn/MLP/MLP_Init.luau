@@ -45,7 +45,7 @@ ts_database.load_version("MLP_Data")
 -- @return MLP_constructor_type
 function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: number, Dropout_Rate: number?, Seed: number?, PretrainedWeights: Types.NN_Data?, Config: Types.ConfigType?): MLP_constructor_type
 	if InputNodes <= 0 or #HiddenLayers <= 0 or OutputNodes <= 0 then
-		error("New(): HiddenLayers must not be empty, InputNodes and OutputNodes must be positive")
+		error("New(): HiddenLayers must not be empty; InputNodes and OutputNodes must be positive")
 	end
 
 	local new_config = table.clone(nn_config)

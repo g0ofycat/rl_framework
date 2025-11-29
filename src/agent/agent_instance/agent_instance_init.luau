@@ -26,6 +26,8 @@ agent_instance.Modules = {
 
 local Types = require("./Types")
 
+local MLP_Types = require("../../nn/MLP/Types")
+
 export type agent_instance_constructor_type = typeof(setmetatable({} :: Types.agent_type, agent_instance))
 
 --========================
@@ -48,8 +50,9 @@ agent_instance.Modules.ts_database.load_version("Agent_Data")
 -- @param callbacks?: Callbacks for environment events
 -- @param env_variables?: Environment variables
 -- @param config?: Types.ConfigType?
+-- @param nn_config?: MLP_Types.ConfigType?
 -- @return agent_instance_constructor_type
-function agent_instance.new(state_size: number, action_size: number, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?, config: Types.ConfigType?): agent_instance_constructor_type
+function agent_instance.new(state_size: number, action_size: number, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?, config: Types.ConfigType?, nn_config: MLP_Types.ConfigType?): agent_instance_constructor_type
 	local new_config = table.clone(agent_instance.Modules.default_config)
 
 	if config then
@@ -60,8 +63,8 @@ function agent_instance.new(state_size: number, action_size: number, action_map:
 
 	local self = {}
 
-	self.policy_net = agent_instance.Modules.MLP.new(state_size, new_config.hidden_layers, action_size, new_config.dropout_rate)
-	self.target_net = agent_instance.Modules.MLP.new(state_size, new_config.hidden_layers, action_size, new_config.dropout_rate)
+	self.policy_net = agent_instance.Modules.MLP.new(state_size, new_config.hidden_layers, action_size, new_config.dropout_rate, nil, nil, nn_config)
+	self.target_net = agent_instance.Modules.MLP.new(state_size, new_config.hidden_layers, action_size, new_config.dropout_rate, nil, nil, nn_config)
 
 	self.env = agent_instance.Modules.rl_env.new(action_map, lru_cache_capacity, callbacks, env_variables)
 
