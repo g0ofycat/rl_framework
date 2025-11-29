@@ -16,19 +16,19 @@ agents can be created using **agent_instance.new()**
 -- new(): Create a new agent
 -- @param state_size: The size of the state
 -- @param action_size: The size of the action
--- @param config: The configuration
 -- @param action_map: Dictionary map for action to reward
 -- @param lru_cache_capacity: Cache capacity for LRU
 -- @param callbacks?: Callbacks for environment events
 -- @param env_variables?: Environment variables
+-- @param config?: The configuration
 -- @return agent_instance_constructor_type
-function agent_instance.new(state_size: number, action_size: number, config: { [string]: any }, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?): agent_instance_constructor_type
+function agent_instance.new(state_size: number, action_size: number, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?, config: Types.ConfigType?): agent_instance_constructor_type
 ```
 
 **example:**
 
 ```lua
-local new_agent = agent_instance.new(0, 0, {},
+local new_agent = agent_instance.new(0, 0,
 {}, 0, {
 
 	on_reset = function(self)
@@ -46,14 +46,12 @@ local new_agent = agent_instance.new(0, 0, {},
 	observation_overwrite = function(self)
 
 	end
-}, {})
+}, {}, {})
 ```
 
 **state_size -** *Amount of input neurons*
 
 **action_size -** *Amount of output neurons*
-
-**config -** *Custom configuration to override default_config.luau (Can be Partial)*
 
 **action_map -** *Map of an action to the reward value (Usually 1 or 0, you do reward logic in on_step)*
 
@@ -62,6 +60,8 @@ local new_agent = agent_instance.new(0, 0, {},
 **callbacks -** *Main logic of the enviroment and agent interaction, see "setting up enviroment" section*
 
 **env_variables -** *Usually a hashmap of variables that should be exposed only to the enviroment, should be used in the callback functions*
+
+**config -** *Custom configuration to override default_config.luau (Can be Partial)*
 
 ## setting up enviroment:
 

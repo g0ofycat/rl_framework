@@ -10,7 +10,7 @@ return {
 	target_update_freq = 20,
 	step_limit = 200,
 	step_interval = 0.0,
-	interval_per_steps = 100,
+	interval_per_steps = 1,
 
 	hidden_layers = { 64, 64, 64 },
 	dropout_rate = 0.1,

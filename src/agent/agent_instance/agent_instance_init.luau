@@ -43,13 +43,13 @@ agent_instance.Modules.ts_database.load_version("Agent_Data")
 -- new(): Create a new agent
 -- @param state_size: The size of the state
 -- @param action_size: The size of the action
--- @param config: The configuration
 -- @param action_map: Dictionary map for action to reward
 -- @param lru_cache_capacity: Cache capacity for LRU
 -- @param callbacks?: Callbacks for environment events
 -- @param env_variables?: Environment variables
+-- @param config?: Types.ConfigType?
 -- @return agent_instance_constructor_type
-function agent_instance.new(state_size: number, action_size: number, config: { [string]: any }, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?): agent_instance_constructor_type
+function agent_instance.new(state_size: number, action_size: number, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?, config: Types.ConfigType?): agent_instance_constructor_type
 	local new_config = table.clone(agent_instance.Modules.default_config)
 
 	if config then

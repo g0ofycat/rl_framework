@@ -1,6 +1,4 @@
 --!strict
---!native
---!optimize 2
 
 local MLP = {}
 
@@ -10,11 +8,9 @@ MLP.__index = MLP
 -- // IMPORTS
 --========================
 
-local FunctionLib = require("../libs/FunctionLib")
-
-local Optimizers = require("../libs/Optimizers/Optimizers_Init")
-
 local ts_database = require("../../db/ts_database/ts_database_init")
+
+local nn_config = require("./Config")
 
 local config = require("../../config")
 
@@ -45,10 +41,19 @@ ts_database.load_version("MLP_Data")
 -- @param Dropout_Rate?: Optional dropout rate
 -- @param Seed?: Optional random seed
 -- @param PretrainedWeights?: Optional pre-trained weights
+-- @param Config?: Types.ConfigType?
 -- @return MLP_constructor_type
-function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: number, Dropout_Rate: number?, Seed: number?, PretrainedWeights: Types.NN_Data?): MLP_constructor_type
+function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: number, Dropout_Rate: number?, Seed: number?, PretrainedWeights: Types.NN_Data?, Config: Types.ConfigType?): MLP_constructor_type
 	if InputNodes <= 0 or #HiddenLayers <= 0 or OutputNodes <= 0 then
 		error("New(): HiddenLayers must not be empty, InputNodes and OutputNodes must be positive")
+	end
+
+	local new_config = table.clone(nn_config)
+
+	if Config then
+		for k, v in Config do
+			new_config[k] = v
+		end
 	end
 
 	local self = {}
@@ -66,10 +71,12 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 	self.weights = {}
 	self.biases = {}
 
-	self.adamStateWeights = {}
-	self.adamStateBiases = {}
+	self.optimizerStateWeights = {}
+	self.optimizerStateBiases = {}
 
 	self.dropoutMasks = {}
+
+	self.config = new_config
 
 	local numLayers = #HiddenLayers + 1
 
@@ -85,20 +92,20 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 		local fromSize = layerSizes[layer]
 		local toSize = layerSizes[layer + 1]
 
-		self.adamStateWeights[layer] = {}
-		self.adamStateBiases[layer] = {}
+		self.optimizerStateWeights[layer] = {}
+		self.optimizerStateBiases[layer] = {}
 		self.dropoutMasks[layer] = {}
 
 		for from = 1, fromSize do
-			self.adamStateWeights[layer][from] = {}
+			self.optimizerStateWeights[layer][from] = {}
 
 			for to = 1, toSize do
-				self.adamStateWeights[layer][from][to] = { m = 0, v = 0 }
+				self.optimizerStateWeights[layer][from][to] = { m = 0, v = 0 }
 			end
 		end
 
 		for to = 1, toSize do
-			self.adamStateBiases[layer][to] = { m = 0, v = 0 }
+			self.optimizerStateBiases[layer][to] = { m = 0, v = 0 }
 		end
 	end
 
@@ -143,7 +150,7 @@ function MLP:ForwardPropagation(Data: { number }, training: boolean): ({ { numbe
 
 		if layer <= #self.hiddenLayers then
 			for to = 1, currentLayerSize do
-				layerOutputs[layer][to] = FunctionLib.LeakyReLU(layerInputs[layer][to])
+				layerOutputs[layer][to] = self.config.activation_function.Activation(layerInputs[layer][to])
 			end
 
 			table.clear(self.dropoutMasks[layer])
@@ -205,7 +212,7 @@ function MLP:BackPropagation(Data: { number }, Target: { number }, LayerInputs: 
 			end
 
 			layerGradients[layer][j] = math.clamp(
-				Error * FunctionLib.LeakyReLUDerivative(LayerInputs[layer][j]),
+				Error * self.config.activation_function.Derivative(LayerInputs[layer][j]),
 				-maxGrad,
 				maxGrad
 			) * self.dropoutMasks[layer][j]
@@ -219,11 +226,11 @@ function MLP:BackPropagation(Data: { number }, Target: { number }, LayerInputs: 
 		for from = 1, #prevOutputs do
 			for to = 1, currentLayerSize do
 				local gradient = layerGradients[layer][to] * prevOutputs[from]
-				local update = Optimizers.Adam(
+				local update = self.config.optimizer_function(
 					LearningRate,
 					gradient,
 					self.timeStep,
-					self.adamStateWeights[layer][from][to]
+					self.optimizerStateWeights[layer][from][to]
 				)
 				self.weights[layer][from][to] -= update
 			end
@@ -231,11 +238,11 @@ function MLP:BackPropagation(Data: { number }, Target: { number }, LayerInputs: 
 
 		for to = 1, currentLayerSize do
 			local gradient = layerGradients[layer][to]
-			local update = Optimizers.Adam(
+			local update = self.config.optimizer_function(
 				LearningRate,
 				gradient,
 				self.timeStep,
-				self.adamStateBiases[layer][to]
+				self.optimizerStateBiases[layer][to]
 			)
 			self.biases[layer][to] -= update
 		end
@@ -288,16 +295,15 @@ end
 
 -- Predict(): Feeds input through the network and returns predictions
 -- @param Data: Input values
--- @param Temperature: Temperature for sampling
 -- @return { number }: Predicted outputs ( Softmaxxed )
-function MLP:Predict(Data: { number }, Temperature: number): { number }
+function MLP:Predict(Data: { number }): { number }
 	if #Data ~= self.inputNodes then
 		error(string.format("Predict(): Data length is %d, expected %d input nodes", #Data, self.inputNodes))
 	end
 
 	local _, _, logits = self:ForwardPropagation(Data, false)
 
-	return FunctionLib.Softmax(FunctionLib.Temperature(logits, Temperature))
+	return self.nn_config.classification_function(logits)
 end
 
 -- Train(): Runs forward + backward propagation to train the network
@@ -322,7 +328,7 @@ function MLP:Train(Data: { number }, Target: { number }, LearningRate: number): 
 
 	local hiddenInputs, hiddenOutputs, logits = self:ForwardPropagation(Data, true)
 
-	local cost = FunctionLib.HuberLoss(logits, Target)
+	local cost = self.nn_config.loss_function(logits, Target)
 
 	self:BackPropagation(Data, Target, hiddenInputs, hiddenOutputs, logits, LearningRate)
 

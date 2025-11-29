@@ -1,6 +1,19 @@
 --!strict
 
-export type AdamState = { m: number, v: number }
+export type OptimizerState = { m: number, v: number }
+
+export type ConfigType = {
+	activation_function: {
+		Activation: (number) -> number,
+		Derivative: (number) -> number
+	},
+
+	loss_function: ({ number }, { number }) -> number,
+
+	optimizer_function: (number, number, number, OptimizerState) -> number,
+
+	classification_function: ({ number }) -> { number }
+}
 
 export type MLP_type = {
 	inputNodes: number,
@@ -16,10 +29,12 @@ export type MLP_type = {
 	weights: { [number]: { [number]: { [number]: number } } },
 	biases: { [number]: { [number]: number } },
 
-	adamStateWeights: { [number]: { [number]: { [number]: AdamState } } },
-	adamStateBiases: { [number]: { [number]: AdamState } },
+	optimizerStateWeights: { [number]: { [number]: { [number]: OptimizerState } } },
+	optimizerStateBiases: { [number]: { [number]: OptimizerState } },
 
-	dropoutMasks: { [number]: { [number]: number } }
+	dropoutMasks: { [number]: { [number]: number } },
+
+	config: ConfigType
 }
 
 export type NN_Data = {
