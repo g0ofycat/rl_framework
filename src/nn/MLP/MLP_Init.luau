@@ -64,9 +64,9 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 
 	self.dropout_rate = Dropout_Rate or 0
 
-	self.timeStep = 1
-
 	self.random_generator = Seed and Random.new(Seed) or Random.new()
+
+	self.optimizer_function = new_config.optimizer_function.new()
 
 	self.weights = {}
 	self.biases = {}
@@ -189,6 +189,7 @@ end
 -- @param LearningRate: Adjustment rate
 function MLP:BackPropagation(Data: { number }, Target: { number }, LayerInputs: { {number} }, LayerOutputs: { {number} }, Outputs: { number }, LearningRate: number): ()
 	local self = self :: Types.MLP_type
+
 	local maxGrad = 10
 	local numLayers = #self.hiddenLayers + 1
 
@@ -226,10 +227,9 @@ function MLP:BackPropagation(Data: { number }, Target: { number }, LayerInputs: 
 		for from = 1, #prevOutputs do
 			for to = 1, currentLayerSize do
 				local gradient = layerGradients[layer][to] * prevOutputs[from]
-				local update = self.config.optimizer_function(
+				local update = self.optimizer_function:Optimize(
 					LearningRate,
 					gradient,
-					self.timeStep,
 					self.optimizerStateWeights[layer][from][to]
 				)
 				self.weights[layer][from][to] -= update
@@ -238,17 +238,14 @@ function MLP:BackPropagation(Data: { number }, Target: { number }, LayerInputs: 
 
 		for to = 1, currentLayerSize do
 			local gradient = layerGradients[layer][to]
-			local update = self.config.optimizer_function(
+			local update = self.optimizer_function:Optimize(
 				LearningRate,
 				gradient,
-				self.timeStep,
 				self.optimizerStateBiases[layer][to]
 			)
 			self.biases[layer][to] -= update
 		end
 	end
-
-	self.timeStep += 1
 end
 
 -- InitData(): Initializes weights and biases

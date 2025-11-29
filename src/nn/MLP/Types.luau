@@ -10,7 +10,7 @@ export type ConfigType = {
 
 	loss_function: ({ number }, { number }) -> number,
 
-	optimizer_function: (number, number, number, OptimizerState) -> number,
+	optimizer_function: any,
 
 	classification_function: ({ number }) -> { number }
 }
@@ -22,9 +22,9 @@ export type MLP_type = {
 
 	dropout_rate: number,
 
-	timeStep: number,
-
 	random_generator: Random,
+
+	optimizer_function: any,
 
 	weights: { [number]: { [number]: { [number]: number } } },
 	biases: { [number]: { [number]: number } },

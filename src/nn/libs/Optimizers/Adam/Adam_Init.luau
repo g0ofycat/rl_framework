@@ -1,41 +1,67 @@
 --!strict
 
+local Adam = {}
+
+Adam.__index = Adam
+
 --=========================
--- // MODULES
+-- // TYPES
 --=========================
 
-local Config = require("./Config")
+local Types = require("./Types")
+
+export type adam_constructor_type = typeof(setmetatable({} :: Types.AdamType, Adam))
+
+--=========================
+-- // CONSTRUCTOR
+--=========================
+
+-- new(): Creates a new Adam optimizer instance
+-- @return adam_constructor_type
+function Adam.new(): adam_constructor_type
+    local self = setmetatable({
+        First_Moment_Decay = 0.9,
+        Second_Moment_Decay = 0.999,
+        Epsilon = 1e-8,
+        TimeStep = 0
+    }, Adam)
+
+    return self
+end
 
 --=========================
 -- // OPTIMIZER API
 --=========================
 
-return
-    -- Adam(): Adam optimizer
-    -- @param learning_rate: number
-    -- @param gradients: number
-    -- @param time_step: number
-    -- @param state: { m: number, v: number }
-    -- @return number: Updated parameter value
-    function(
-        learning_rate: number,
-        gradients: number,
-        time_step: number,
-        state: { m: number, v: number }
-    ): number
-        local m = state.m
-        local v = state.v
+-- Optimize(): Adam optimizer
+-- @param learning_rate: number
+-- @param gradients: number
+-- @param state: { m: number, v: number }
+-- @return number: Updated parameter value
+function Adam:Optimize(
+    learning_rate: number,
+    gradients: number,
+    state: { m: number, v: number }
+): number
+    local self = self :: Types.AdamType
 
-        m = Config.First_Moment_Decay * m + (1 - Config.First_Moment_Decay) * gradients
-        v = Config.Second_Moment_Decay * v + (1 - Config.Second_Moment_Decay) * (gradients * gradients)
+    self.TimeStep += 1
 
-        local m_hat = m / (1 - Config.First_Moment_Decay ^ time_step)
-        local v_hat = v / (1 - Config.Second_Moment_Decay ^ time_step)
+    local m = state.m
+    local v = state.v
 
-        local update = learning_rate * (m_hat / (math.sqrt(v_hat) + Config.Epsilon))
+    m = self.First_Moment_Decay * m + (1 - self.First_Moment_Decay) * gradients
+    v = self.Second_Moment_Decay * v + (1 - self.Second_Moment_Decay) * (gradients * gradients)
 
-        state.m = m
-        state.v = v
+    local m_hat = m / (1 - self.First_Moment_Decay ^ self.TimeStep)
+    local v_hat = v / (1 - self.Second_Moment_Decay ^ self.TimeStep)
 
-        return update
-    end
+    local update = learning_rate * (m_hat / (math.sqrt(v_hat) + self.Epsilon))
+
+    state.m = m
+    state.v = v
+
+    return update
+end
+
+return Adam
