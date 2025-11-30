@@ -45,7 +45,7 @@ ts_database.load_version("MLP_Data")
 -- @return MLP_constructor_type
 function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: number, Dropout_Rate: number?, Seed: number?, PretrainedWeights: Types.NN_Data?, Config: Types.ConfigType?): MLP_constructor_type
 	if InputNodes <= 0 or #HiddenLayers <= 0 or OutputNodes <= 0 then
-		error("New(): HiddenLayers must not be empty; InputNodes and OutputNodes must be positive")
+		error("new(): HiddenLayers must not be empty; InputNodes and OutputNodes must be positive")
 	end
 
 	local new_config = table.clone(nn_config)
@@ -271,17 +271,9 @@ function MLP:InitData(InputNodes: number, HiddenLayers: { number }, OutputNodes:
 			local fromSize = layerSizes[layer]
 			local toSize = layerSizes[layer + 1]
 
-			self.weights[layer] = {}
 			self.biases[layer] = {}
 
-			local scale = math.sqrt(6 / (fromSize + toSize))
-
-			for from = 1, fromSize do
-				self.weights[layer][from] = {}
-				for to = 1, toSize do
-					self.weights[layer][from][to] = self.random_generator:NextNumber(-scale, scale)
-				end
-			end
+			self.config.weight_init_function(self.weights, fromSize, toSize, layer, self.random_generator)
 
 			for to = 1, toSize do
 				self.biases[layer][to] = self.random_generator:NextNumber(-0.05, 0.05)
@@ -292,7 +284,7 @@ end
 
 -- Predict(): Feeds input through the network and returns predictions
 -- @param Data: Input values
--- @return { number }: Predicted outputs ( Softmaxxed )
+-- @return { number }: Predicted outputs
 function MLP:Predict(Data: { number }): { number }
 	if #Data ~= self.inputNodes then
 		error(string.format("Predict(): Data length is %d, expected %d input nodes", #Data, self.inputNodes))

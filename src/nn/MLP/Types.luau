@@ -2,6 +2,10 @@
 
 export type OptimizerState = { m: number, v: number }
 
+export type XavierUniformType = (weights: { [number]: { [number]: { [number]: number } } }, fromSize: number, toSize: number, layer: number, random_generator: Random) -> ()
+
+export type HeUniformType = (weights: { [number]: { [number]: { [number]: number } } }, fromSize: number, toSize: number, layer: number, random_generator: Random) -> ()
+
 export type ConfigType = {
 	activation_function: {
 		Activation: (number) -> number,
@@ -12,7 +16,9 @@ export type ConfigType = {
 
 	optimizer_function: any,
 
-	classification_function: ({ number }) -> { number }
+	classification_function: ({ number }) -> { number },
+
+	weight_init_function: XavierUniformType | HeUniformType
 }
 
 export type MLP_type = {
