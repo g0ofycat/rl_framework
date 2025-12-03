@@ -1,18 +1,18 @@
 --!strict
 
 return {
-    -- Sigmoid(): Sigmoid activation function
+    -- Swish(): Swish activation function
     -- @param x: Input value
-    -- @return number: Output between 0 and 1
+    -- @return number: Output
     Activation = function(x: number): number
         if x >= 0 then
-            return 1 / (1 + math.exp(-x))
+            return x * (1 / (1 + math.exp(-x)))
         else
-            return math.exp(x) / (1 + math.exp(x))
+            return x * (math.exp(x) / (1 + math.exp(x)))
         end
     end,
 
-    -- SigmoidDerivative(): Sigmoid derivative
+    -- SwishDerivative(): Swish derivative
     -- @param x: Input value
     -- @return number: Derivative value
     Derivative = function(x: number): number
@@ -24,6 +24,6 @@ return {
             s = math.exp(x) / (1 + math.exp(x))
         end
 
-        return s * (1 - s)
+        return s + x * s * (1 - s)
     end
 }

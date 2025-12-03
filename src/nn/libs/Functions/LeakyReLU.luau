@@ -15,12 +15,12 @@ return {
     end,
 
     -- LeakyReLUDerivative(): LeakyReLU derivative
-    -- @param y: Output of the LeakyReLU function
-    -- @return number: Derivative value
-    Derivative = function(y: number): number
+    -- @param x: Input value
+    -- @return number: 1 if x > 0, alpha otherwise
+    Derivative = function(x: number): number
         local alpha = 0.01
 
-        if y > 0 then
+        if x > 0 then
             return 1
         else
             return alpha

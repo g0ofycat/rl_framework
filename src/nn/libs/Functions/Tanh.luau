@@ -9,9 +9,11 @@ return {
     end,
 
     -- TanhDerivative(): Tanh derivative
-    -- @param y: Output of Tanh function
+    -- @param x: Input value
     -- @return number: Derivative value
-    Derivative = function(y: number): number
-        return 1 - y * y
+    Derivative = function(x: number): number
+        local t = math.tanh(x)
+
+        return 1 - t * t
     end
 }

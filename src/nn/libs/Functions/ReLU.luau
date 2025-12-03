@@ -9,13 +9,13 @@ return {
     end,
 
     -- ReLUDerivative(): ReLU derivative
-    -- @param y: Output of the ReLU function
-    -- @return number: Derivative value
-    Derivative = function(y: number): number
-        if y > 0 then
+    -- @param x: Input value
+    -- @return number: 1 if x > 0, 0 otherwise
+    Derivative = function(x: number): number
+        if x > 0 then
             return 1
+        else
+            return 0
         end
-
-        return 0
     end
 }
