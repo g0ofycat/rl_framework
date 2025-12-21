@@ -148,6 +148,26 @@ function agent_instance:create_inference_thread(get_state: () -> { number }, on_
 function agent_instance:get_best_action(state: { number }): number
 ```
 
+### saving & loading:
+
+currently using delta compression & JSONEncode; will most likely change to bitpacking
+
+**saving**
+
+```lua
+-- save_model(): Saves the model
+-- @return string: The model data as a string
+function agent_instance:save_model(): string
+```
+
+**loading**
+
+```lua
+-- load_model(): Loads the model
+-- @param model_data: String containing the model data
+function agent_instance:load_model(model_data: string): ()
+```
+
 ## settings:
 
 rl framework uses DQN and Epsilon-Greedy (With Decay); settings are self explanatory
