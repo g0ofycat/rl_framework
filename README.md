@@ -148,7 +148,7 @@ function agent_instance:create_inference_thread(get_state: () -> { number }, on_
 function agent_instance:get_best_action(state: { number }): number
 ```
 
-### saving & loading:
+## saving & loading:
 
 currently using delta compression & JSONEncode; will most likely change to bitpacking
 
