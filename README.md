@@ -152,7 +152,7 @@ function agent_instance:get_best_action(state: { number }): number
 
 currently using delta compression & JSONEncode; will most likely change to bitpacking
 
-**saving**
+**saving:**
 
 ```lua
 -- save_model(): Saves the model
@@ -160,7 +160,7 @@ currently using delta compression & JSONEncode; will most likely change to bitpa
 function agent_instance:save_model(): string
 ```
 
-**loading**
+**loading:**
 
 ```lua
 -- load_model(): Loads the model
