@@ -1,23 +1,26 @@
 --!strict
---!native
---!optimize 2
 
 local agent_instance = {}
 
 agent_instance.__index = agent_instance
 
 --=========================
+-- // SERVICES
+--=========================
+
+local HttpService = game:GetService("HttpService")
+
+--=========================
 -- // MODULES
 --=========================
 
 agent_instance.Modules = {
-	ts_database = require("../../db/ts_database/ts_database_init"),
-	rl_env = require("../../env/rl_env/rl_env_init"),
-	lru_cache = require("../../env/utility/lru_cache/lru_cache_init"),
-	MLP = require("../../nn/MLP/MLP_Init"),
+	nn_serializer = require("../serializer/nn_serializer"),
+	rl_env = require("../env/rl_env/rl_env_init"),
+	lru_cache = require("../env/utility/lru_cache/lru_cache_init"),
+	MLP = require("../nn/MLP/MLP_Init"),
 
-	default_config = require("./default_config"),
-	config = require("../../config")
+	default_config = require("./default_config")
 }
 
 --=========================
@@ -26,17 +29,9 @@ agent_instance.Modules = {
 
 local Types = require("./Types")
 
-local MLP_Types = require("../../nn/MLP/Types")
+local MLP_Types = require("../nn/MLP/Types")
 
 export type agent_instance_constructor_type = typeof(setmetatable({} :: Types.agent_type, agent_instance))
-
---========================
--- // DB INIT
---========================
-
-agent_instance.Modules.ts_database.set_api_key(agent_instance.Modules.config.strings.db_api_key)
-
-agent_instance.Modules.ts_database.load_version("Agent_Data")
 
 --=========================
 -- // CONSTRUCTOR
@@ -237,27 +232,22 @@ end
 -- // SAVING / LOADING
 --=========================
 
--- save_to_db(): Saves the networks to the database
--- @param name?: Custom name, if any
--- @return id: The ID of the inserted networks
-function agent_instance:save_to_db(name: any?): number
-	local id = agent_instance.Modules.ts_database.insert({ name = name, data = { policy_net = self.policy_net:ExportData(), target_net = self.target_net:ExportData() } })
-
-	return id
+-- save_model(): Saves the model
+-- @return string: The model data as a string
+function agent_instance:save_model(): string
+	return HttpService:JSONEncode({
+		policy_net = self.policy_net:SaveNN(),
+		target_net = self.target_net:SaveNN()
+	})
 end
 
--- load_from_db(): Loads the networks from the database
--- @param id: The ID of the data to load
-function agent_instance:load_from_db(id: number): ()
-	local json_body = agent_instance.Modules.ts_database.get(id)
+-- load_model(): Loads the model
+-- @param model_data: String containing the model data
+function agent_instance:load_model(model_data: string): ()
+	local decoded = HttpService:JSONDecode(model_data)
 
-	if not json_body then
-		warn("load_from_db(): Failed to load from database")
-		return 
-	end
-
-	self.policy_net:ImportData(json_body.data.policy_net)
-	self.target_net:ImportData(json_body.data.target_net)
+	self.policy_net:LoadNN(decoded.policy_net)
+	self.target_net:LoadNN(decoded.target_net)
 end
 
 --=========================

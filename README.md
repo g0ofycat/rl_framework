@@ -4,8 +4,6 @@ welcome to another project that i made that has absolutley 0 use case because wh
 
 reinforcement learning framework wip, i'll add more types of nn's later. mainly rnn's
 
-also uses an external database to handle model saving / loading (https://github.com/g0ofycat/ts_database)
-
 ## api
 
 agents can be created using **agent_instance.new()**

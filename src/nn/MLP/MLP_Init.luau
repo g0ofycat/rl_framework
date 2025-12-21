@@ -8,11 +8,9 @@ MLP.__index = MLP
 -- // IMPORTS
 --========================
 
-local ts_database = require("../../db/ts_database/ts_database_init")
+local nn_serializer = require("../../serializer/nn_serializer")
 
 local nn_config = require("./Config")
-
-local config = require("../../config")
 
 --========================
 -- // TYPES
@@ -21,14 +19,6 @@ local config = require("../../config")
 local Types = require("./Types")
 
 export type MLP_constructor_type = typeof(setmetatable({} :: Types.MLP_type, MLP))
-
---========================
--- // DB INIT
---========================
-
-ts_database.set_api_key(config.strings.db_api_key)
-
-ts_database.load_version("MLP_Data")
 
 --========================
 -- // CONSTRUCTOR
@@ -349,7 +339,7 @@ function MLP:SoftUpdate(targetMLP: MLP_constructor_type, tau: number): ()
 end
 
 --========================
--- // DB OPERATIONS
+-- // UTILITY API
 --========================
 
 -- ImportData(): Loads pre-trained weights and biases
@@ -370,21 +360,16 @@ function MLP:ExportData(): Types.NN_Data
 	}
 end
 
--- SaveToDB(): Saves the weights and biases to the database
--- @param name?: Custom name, if any
--- @return id: The ID of the inserted data
-function MLP:SaveToDB(name: any?): number
-	local id = ts_database.insert({ name = name, data = self:ExportData() })
-
-	return id
+-- SaveNN(): Returns the weights and biases as a string
+-- @return string: Encoded string of weights and biases
+function MLP:SaveNN(): string
+	return nn_serializer.serialize(self:ExportData())
 end
 
--- LoadFromDB(): Loads the weights and biases from the database
--- @param id: The ID of the data to load
-function MLP:LoadFromDB(id: number): ()
-	local data = ts_database.get(id)
-
-	self:ImportData(data)
+-- LoadNN(): Loads the weights and biases from the string
+-- @param data: The encoded string of weights and biases
+function MLP:LoadNN(data: string): ()
+	return self:ImportData(nn_serializer.deserialize(data))
 end
 
 return MLP

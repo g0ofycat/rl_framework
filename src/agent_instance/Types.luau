@@ -37,6 +37,11 @@ export type observation_type = { any } | {
 	lru_data: any
 }
 
+export type agent_export = {
+	policy_net: string,
+	target_net: string
+}
+
 export type callback_table = {
 	on_reset: ((self: any) -> ())?,
 	on_step: ((self: any, action_index: number) -> (number, boolean))?,
