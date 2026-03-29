@@ -2,9 +2,12 @@
 
 export type OptimizerState = { m: number, v: number }
 
-export type XavierUniformType = (weights: { [number]: { [number]: { [number]: number } } }, fromSize: number, toSize: number, layer: number, random_generator: Random) -> ()
+export type NN_Weights = { [number]: { [number]: { [number]: number } } }
+export type NN_Biases = { [number]: { [number]: number } }
 
-export type HeUniformType = (weights: { [number]: { [number]: { [number]: number } } }, fromSize: number, toSize: number, layer: number, random_generator: Random) -> ()
+export type XavierUniformType = (weights: NN_Weights, fromSize: number, toSize: number, layer: number, random_generator: Random) -> ()
+
+export type HeUniformType = (weights: NN_Weights, fromSize: number, toSize: number, layer: number, random_generator: Random) -> ()
 
 export type ConfigType = {
 	activation_function: {
@@ -34,23 +37,30 @@ export type MLP_type = {
 
 	optimizer_function: any,
 
-	weights: { [number]: { [number]: { [number]: number } } },
-	biases: { [number]: { [number]: number } },
+	weights: NN_Weights,
+	biases: NN_Biases,
 
 	optimizerStateWeights: { [number]: { [number]: { [number]: OptimizerState } } },
 	optimizerStateBiases: { [number]: { [number]: OptimizerState } },
 
 	dropoutMasks: { [number]: { [number]: number } },
 
-	config: ConfigType
+	config: ConfigType,
+
+	layerSizes: { number }
 }
 
 export type NN_Data = {
-	weights: { [number]: { [number]: { [number]: number } } },
+	inputNodes: number,
+	hiddenLayers: { number },
+	layerSizes: { number },
+	outputNodes: number,
 
-	biases: { [number]: { [number]: number } },
+	weights: NN_Weights,
+	biases: NN_Biases,
 
-	hiddenLayers: { number }
+    min: number?,
+    scale: number?
 }
 
 return nil

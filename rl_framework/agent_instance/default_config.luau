@@ -8,11 +8,11 @@ return {
 	epsilon_min = 0.05,
 	epsilon_decay = 0.99,
 	target_update_freq = 10,
-	step_limit = 2000,
+	step_limit = 500,
 	step_interval = 0.0,
-	interval_per_steps = 10,
+	interval_per_steps = 1,
 
-	hidden_layers = { 128, 128, 64 },
+	hidden_layers = { 64, 64 },
 	dropout_rate = 0.05,
 	soft_update_tau = 0.01
 }

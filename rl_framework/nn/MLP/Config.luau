@@ -1,8 +1,16 @@
 --!strict
 
+--========================
+-- // REFERENCES
+--========================
+
 local Functions = script.Parent.Parent.libs.Functions
 local Optimizers = script.Parent.Parent.libs.Optimizers
 local WeightInit = script.Parent.Parent.libs.WeightInit
+
+--========================
+-- // RETURN
+--========================
 
 return {
     activation_function = require(Functions.ReLU),

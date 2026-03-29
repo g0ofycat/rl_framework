@@ -69,15 +69,16 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 
 	self.config = new_config
 
-	local numLayers = #HiddenLayers + 1
-
 	local layerSizes = { InputNodes }
-
 	for i = 1, #HiddenLayers do
 		table.insert(layerSizes, HiddenLayers[i])
 	end
 
 	table.insert(layerSizes, OutputNodes)
+
+	self.layerSizes = layerSizes
+
+	local numLayers = #layerSizes - 1
 
 	for layer = 1, numLayers do
 		local fromSize = layerSizes[layer]
@@ -99,7 +100,6 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 			self.optimizerStateBiases[layer][to] = { m = 0, v = 0 }
 		end
 	end
-
 	local MLP_Object = setmetatable(self, MLP);
 
 	(MLP_Object :: any):InitData(InputNodes, HiddenLayers, OutputNodes, PretrainedWeights) -- // i guess bro
@@ -358,13 +358,18 @@ end
 -- ExportData(): Returns the weights and biases of the network
 -- @return Types.NN_Data
 function MLP:ExportData(): Types.NN_Data
-	local self = self :: MLP_constructor_type
+    local self = self :: MLP_constructor_type
 
-	return {
-		weights = self.weights,
-		biases = self.biases,
-		hiddenLayers = self.hiddenLayers
-	}
+    return {
+        inputNodes = self.inputNodes,
+        hiddenLayers = self.hiddenLayers,
+        outputNodes = self.outputNodes,
+
+        weights = self.weights,
+        biases = self.biases,
+
+		layerSizes = self.layerSizes
+    }
 end
 
 -- SaveNN(): Returns the weights and biases as a string
