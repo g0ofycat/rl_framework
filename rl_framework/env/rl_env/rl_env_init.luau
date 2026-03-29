@@ -37,7 +37,7 @@ function rl_env.new(action_map: { [any]: number }, lru_cache_capacity: number, c
 	self.current_action = ""
 	self.info = {}
 	self.env_variables = env_variables
-	self.lru_actions = lru_cache.new(lru_cache_capacity)
+	self.lru_actions = lru_cache.new(lru_cache_capacity) :: lru_cache.lru_cache_constructor_type<string, number>
 
 	self.on_reset = callbacks and callbacks.on_reset or nil
 	self.on_step = callbacks and callbacks.on_step or nil
@@ -126,8 +126,8 @@ function rl_env:step(action_index: number, info: any?): Types.step_return
 	local score, done = self:on_step(action_index)
 
 	return {
-		done = done or self.done,
-		info = self.info,
+		done = done or self.done :: boolean,
+		info = self.info :: { any },
 		observation = self:get_observation(),
 		score = score or self.score
 	}
@@ -137,11 +137,11 @@ end
 -- @return Types.rl_env_exported_data
 function rl_env:export_data(): Types.rl_env_exported_data
 	return {
-		score = self.score,
-		done = self.done,
-		action_map = self.action_map,
-		current_action = self.current_action,
-		info = self.info,
+		score = self.score :: number,
+		done = self.done :: boolean,
+		action_map = self.action_map :: { [any]: number },
+		current_action = self.current_action :: string,
+		info = self.info :: { any },
 		exported_lru_data = self.lru_actions:export_data()
 	}
 end

@@ -14,7 +14,9 @@ export type ConfigType = {
 
 	hidden_layers: { number },
 	dropout_rate: number,
-	soft_update_tau: number
+	soft_update_tau: number,
+
+	[any]: any
 }
 
 export type agent_type = {
@@ -31,11 +33,7 @@ export type agent_type = {
 	action_size: number
 }
 
-export type observation_type = { any } | {
-	score: number,
-	current_action: string,
-	lru_data: any
-}
+export type observation_type = { any }
 
 export type agent_export = {
 	policy_net: string,

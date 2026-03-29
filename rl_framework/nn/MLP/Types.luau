@@ -18,7 +18,9 @@ export type ConfigType = {
 
 	classification_function: ({ number }) -> { number },
 
-	weight_init_function: XavierUniformType | HeUniformType
+	weight_init_function: XavierUniformType | HeUniformType,
+
+	[any]: any
 }
 
 export type MLP_type = {

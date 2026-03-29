@@ -1,5 +1,7 @@
 --!strict
 
+export type observation_type = { any }
+
 export type rl_type<lru_type> = {
 	score: number,
 	done: boolean,
@@ -30,12 +32,6 @@ export type rl_env_exported_data = {
 	current_action: string,
 	info: { [number]: any },
 	exported_lru_data: any
-}
-
-export type observation_type = { any } | {
-	score: number,
-	current_action: string,
-	lru_data: any
 }
 
 export type callback_table = {

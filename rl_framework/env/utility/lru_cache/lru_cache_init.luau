@@ -75,7 +75,7 @@ function lru_cache:put<key, value>(key: key, value: value): ()
 			end
 		end
 	else
-		if #self.order >= self.capacity then
+		if #self.order >= self.capacity :: number then
 			local oldest = table.remove(self.order, 1) :: key
 			self.current_cache[oldest] = nil
 		end
@@ -89,7 +89,7 @@ end
 -- size(): Get the size of the cache
 -- @return number: Size of the cache
 function lru_cache:size(): number
-	return #self.order
+	return #self.order :: { any }
 end
 
 -- put_array(): Insert an array into the cache
@@ -105,13 +105,13 @@ function lru_cache:put_array(array: { any }): ()
 			end
 		end
 	else
-		if #self.order >= self.capacity then
-			local oldest = table.remove(self.order, 1)
+		if #self.order >= self.capacity :: number then
+			local oldest = table.remove(self.order, 1) :: string
 			self.current_cache[oldest] = nil
 		end
 	end
 
-	table.insert(self.order, key)
+	table.insert(self.order	:: { any }, key)
 
 	self.current_cache[key] = array
 end
@@ -126,11 +126,9 @@ end
 -- @return Types.lru_type<key, value>
 function lru_cache:export_data<key, value>(): Types.lru_type<key, value>
 	return {
-		capacity = self.capacity,
-
-		current_cache = self.current_cache,
-
-		order = self.order
+		capacity = self.capacity :: number,
+		current_cache = self.current_cache :: { [key]: value },
+		order = self.order :: { key }
 	}
 end
 

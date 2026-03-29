@@ -41,8 +41,9 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 	local new_config = table.clone(nn_config)
 
 	if Config then
+		local mutable_config = new_config :: { [string]: any }
 		for k, v in Config do
-			new_config[k] = v
+			mutable_config[k] = v
 		end
 	end
 
@@ -99,9 +100,9 @@ function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: numb
 		end
 	end
 
-	local MLP_Object = setmetatable(self, MLP)
+	local MLP_Object = setmetatable(self, MLP);
 
-	MLP_Object:InitData(InputNodes, HiddenLayers, OutputNodes, PretrainedWeights)
+	(MLP_Object :: any):InitData(InputNodes, HiddenLayers, OutputNodes, PretrainedWeights) -- // i guess bro
 
 	return MLP_Object
 end
@@ -115,6 +116,8 @@ end
 -- @param training: If true, dropout is applied
 -- @return ({ { number } }, { { number } }, { number }): layerInputs, layerOutputs, layerOutputs[numLayers]
 function MLP:ForwardPropagation(Data: { number }, training: boolean): ({ { number } }, { { number } }, { number })
+	local self = self :: MLP_constructor_type
+
 	local numLayers = #self.hiddenLayers + 1
 	local layerInputs = {}
 	local layerOutputs = {}
@@ -282,7 +285,7 @@ function MLP:Predict(Data: { number }): { number }
 
 	local _, _, logits = self:ForwardPropagation(Data, false)
 
-	return self.nn_config.classification_function(logits)
+	return self.config.classification_function(logits)
 end
 
 -- Train(): Runs forward + backward propagation to train the network
@@ -307,7 +310,7 @@ function MLP:Train(Data: { number }, Target: { number }, LearningRate: number): 
 
 	local hiddenInputs, hiddenOutputs, logits = self:ForwardPropagation(Data, true)
 
-	local cost = self.nn_config.loss_function(logits, Target)
+	local cost = self.config.loss_function(logits, Target)
 
 	self:BackPropagation(Data, Target, hiddenInputs, hiddenOutputs, logits, LearningRate)
 
@@ -318,6 +321,8 @@ end
 -- @param targetMLP: The target network to update
 -- @param tau: The soft update parameter
 function MLP:SoftUpdate(targetMLP: MLP_constructor_type, tau: number): ()
+	local self = self :: MLP_constructor_type
+
 	local numLayers = #self.hiddenLayers + 1
 
 	for layer = 1, numLayers do
@@ -353,6 +358,8 @@ end
 -- ExportData(): Returns the weights and biases of the network
 -- @return Types.NN_Data
 function MLP:ExportData(): Types.NN_Data
+	local self = self :: MLP_constructor_type
+
 	return {
 		weights = self.weights,
 		biases = self.biases,

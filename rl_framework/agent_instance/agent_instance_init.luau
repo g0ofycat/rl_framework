@@ -51,8 +51,9 @@ function agent_instance.new(state_size: number, action_size: number, action_map:
 	local new_config = table.clone(agent_instance.Modules.default_config)
 
 	if config then
+		local mutable_config = new_config :: { [string]: any }
 		for k, v in config do
-			new_config[k] = v
+			mutable_config[k] = v
 		end
 	end
 
@@ -185,7 +186,7 @@ function agent_instance:train_step(): ()
 		if not dict.done then
 			local _, _, next_q = self.target_net:ForwardPropagation(dict.next_state, false)
 
-			local max_next_q = math.max(table.unpack(next_q))
+			local max_next_q = math.max(table.unpack(next_q) :: number)
 
 			target = dict.reward :: number + self.config.gamma :: number * max_next_q
 		end
@@ -205,10 +206,8 @@ end
 
 -- decay_epsilon(): Decays the epsilon value
 function agent_instance:decay_epsilon(): ()
-	local epsilon = self.config.epsilon
-
-	if epsilon > self.config.epsilon_min :: number then
-		self.config.epsilon = math.max(self.config.epsilon_min, self.config.epsilon * self.config.epsilon_decay)
+	if self.config.epsilon > self.config.epsilon_min :: number then
+		self.config.epsilon = math.max(self.config.epsilon_min, self.config.epsilon :: number * self.config.epsilon_decay :: number)
 	end
 end
 
@@ -311,7 +310,7 @@ function agent_instance:run_episodes(
 			episode_callback(episode, total_reward)
 		end
 
-		if episode % self.config.target_update_freq == 0 then
+		if episode % self.config.target_update_freq :: number == 0 then
 			self:update_target_network()
 		end
 	end
