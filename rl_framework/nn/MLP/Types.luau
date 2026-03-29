@@ -59,8 +59,8 @@ export type NN_Data = {
 	weights: NN_Weights,
 	biases: NN_Biases,
 
-    min: number?,
-    scale: number?
+	min: number?,
+	scale: number?
 }
 
 return nil

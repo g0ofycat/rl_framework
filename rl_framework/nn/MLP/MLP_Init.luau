@@ -363,12 +363,11 @@ function MLP:ExportData(): Types.NN_Data
     return {
         inputNodes = self.inputNodes,
         hiddenLayers = self.hiddenLayers,
+		layerSizes = self.layerSizes,
         outputNodes = self.outputNodes,
 
         weights = self.weights,
-        biases = self.biases,
-
-		layerSizes = self.layerSizes
+        biases = self.biases
     }
 end
 
