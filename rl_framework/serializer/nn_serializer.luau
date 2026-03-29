@@ -113,7 +113,6 @@ end
 -- @return string: The serialized JSON string
 function nn_serializer.serialize(data: MLP_Types.NN_Data): string
     local compressed_data = delta_compress(data)
-
     return HttpService:JSONEncode(compressed_data)
 end
 
@@ -122,7 +121,6 @@ end
 -- @return MLP_Types.NN_Data: The decompressed neural network data
 function nn_serializer.deserialize(compressed_data: string): MLP_Types.NN_Data
     local deserialized_data = HttpService:JSONDecode(compressed_data)
-
     return delta_decompress(deserialized_data)
 end
 

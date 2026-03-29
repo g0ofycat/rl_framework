@@ -42,7 +42,7 @@ function Momentum:Optimize(
 ): number
     local self = self :: Types.MomentumType
 
-   state.m = self.Beta * state.m + (1 - self.Beta) * gradients
+    state.m = self.Beta * state.m + (1 - self.Beta) * gradients
 
     return learning_rate * state.m
 end
