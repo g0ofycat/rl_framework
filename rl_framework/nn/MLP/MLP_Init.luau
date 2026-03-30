@@ -31,9 +31,9 @@ export type MLP_constructor_type = typeof(setmetatable({} :: Types.MLP_type, MLP
 -- @param Dropout_Rate?: Optional dropout rate
 -- @param Seed?: Optional random seed
 -- @param PretrainedWeights?: Optional pre-trained weights
--- @param Config?: Types.ConfigType?
+-- @param Config?: Types.OptionalConfigType?
 -- @return MLP_constructor_type
-function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: number, Dropout_Rate: number?, Seed: number?, PretrainedWeights: Types.NN_Data?, Config: Types.ConfigType?): MLP_constructor_type
+function MLP.new(InputNodes: number, HiddenLayers: { number }, OutputNodes: number, Dropout_Rate: number?, Seed: number?, PretrainedWeights: Types.NN_Data?, Config: Types.OptionalConfigType?): MLP_constructor_type
 	if InputNodes <= 0 or #HiddenLayers <= 0 or OutputNodes <= 0 then
 		error("new(): HiddenLayers must not be empty; InputNodes and OutputNodes must be positive")
 	end

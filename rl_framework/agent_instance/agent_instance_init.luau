@@ -44,10 +44,10 @@ export type agent_instance_constructor_type = typeof(setmetatable({} :: Types.ag
 -- @param lru_cache_capacity: Cache capacity for LRU
 -- @param callbacks?: Callbacks for environment events
 -- @param env_variables?: Environment variables
--- @param config?: Types.ConfigType?
--- @param nn_config?: MLP_Types.ConfigType?
+-- @param config?: Types.OptionalConfigType?
+-- @param nn_config?: MLP_Types.OptionalConfigType?
 -- @return agent_instance_constructor_type
-function agent_instance.new(state_size: number, action_size: number, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?, config: Types.ConfigType?, nn_config: MLP_Types.ConfigType?): agent_instance_constructor_type
+function agent_instance.new(state_size: number, action_size: number, action_map: { [any]: number }, lru_cache_capacity: number, callbacks: Types.callback_table?, env_variables: any?, config: Types.OptionalConfigType?, nn_config: MLP_Types.OptionalConfigType?): agent_instance_constructor_type
 	local new_config = table.clone(agent_instance.Modules.default_config)
 
 	if config then

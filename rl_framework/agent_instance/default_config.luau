@@ -1,15 +1,15 @@
 --!strict
 
 return {
-	batch_size = 64,
+	batch_size = 128,
 	learning_rate = 0.0005,
 	gamma = 0.99,
 	epsilon = 1.0,
 	epsilon_min = 0.05,
-	epsilon_decay = 0.99,
+	epsilon_decay = 0.995,
 	target_update_freq = 10,
-	step_limit = 500,
-	step_interval = 0.0,
+	step_limit = 50,
+	step_interval = 0.5,
 	interval_per_steps = 1,
 
 	hidden_layers = { 64, 64 },

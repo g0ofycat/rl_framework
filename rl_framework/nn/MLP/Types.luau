@@ -26,6 +26,23 @@ export type ConfigType = {
 	[any]: any
 }
 
+export type OptionalConfigType = {
+	activation_function: {
+		Activation: ((number) -> number)?,
+		Derivative: ((number) -> number)?
+	}?,
+
+	loss_function: (({ number }, { number }) -> number)?,
+
+	optimizer_function: any?,
+
+	classification_function: (({ number }) -> { number })?,
+
+	weight_init_function: (XavierUniformType | HeUniformType)?,
+
+	[any]: any
+}
+
 export type MLP_type = {
 	inputNodes: number,
 	hiddenLayers: { number },

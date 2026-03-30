@@ -19,6 +19,25 @@ export type ConfigType = {
 	[any]: any
 }
 
+export type OptionalConfigType = {
+	batch_size: number?,
+	learning_rate: number?,
+	gamma: number?,
+	epsilon: number?,
+	epsilon_min: number?,
+	epsilon_decay: number?,
+	target_update_freq: number?,
+	step_limit: number?,
+	step_interval: number?,
+	interval_per_steps: number?,
+
+	hidden_layers: { number }?,
+	dropout_rate: number?,
+	soft_update_tau: number?,
+
+	[any]: any
+}
+
 export type agent_type = {
 	policy_net: any,
 	target_net: any,
