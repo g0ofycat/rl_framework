@@ -29,9 +29,7 @@ function lru_cache.new<key, value>(capacity: number): lru_cache_constructor_type
 	local self = {}
 
 	self.capacity = capacity
-
 	self.current_cache = {}
-
 	self.order = {}
 
 	return setmetatable(self, lru_cache)
@@ -111,7 +109,7 @@ function lru_cache:put_array(array: { any }): ()
 		end
 	end
 
-	table.insert(self.order	:: { any }, key)
+	table.insert(self.order, key)
 
 	self.current_cache[key] = array
 end
@@ -123,7 +121,7 @@ function lru_cache:reset(): ()
 end
 
 -- export_data(): Export the cache data
--- @return Types.lru_type<key, value>
+-- @return lru_type<key, value>
 function lru_cache:export_data<key, value>(): Types.lru_type<key, value>
 	return {
 		capacity = self.capacity :: number,

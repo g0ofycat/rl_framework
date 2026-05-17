@@ -16,7 +16,7 @@ return {
     -- @param x: Input value
     -- @return number: Derivative value
     Derivative = function(x: number): number
-        local s
+        local s: number
 
         if x >= 0 then
             s = 1 / (1 + math.exp(-x))
