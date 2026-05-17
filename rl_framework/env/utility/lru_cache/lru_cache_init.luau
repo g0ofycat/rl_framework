@@ -121,7 +121,7 @@ function lru_cache:reset(): ()
 end
 
 -- export_data(): Export the cache data
--- @return lru_type<key, value>
+-- @return Types.lru_type<key, value>
 function lru_cache:export_data<key, value>(): Types.lru_type<key, value>
 	return {
 		capacity = self.capacity :: number,
